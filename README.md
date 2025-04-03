@@ -1,5 +1,5 @@
 # E-commerce
-Projeto de Cloud e Big Data
+Projeto da disciplina Cloud e Big Data
 
 membros:
 
