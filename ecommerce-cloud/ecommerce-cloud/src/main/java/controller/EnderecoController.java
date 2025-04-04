@@ -1,7 +1,7 @@
 package controller;
 
-import models.Endereco;
-import models.Usuario;
+import model.Endereco;
+import model.Usuario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import repository.EnderecoRepository;
 import repository.UsuarioRepository;
 
+import java.util.Iterator;
 import java.util.Optional;
 
 @RestController
@@ -22,45 +23,47 @@ public class EnderecoController {
 
     @PostMapping
     public ResponseEntity<Endereco> create(@PathVariable("id_user") int id_user, @RequestBody Endereco endereco) {
-        //Verificando se o usuario existe na base
-        Optional<Usuario> optionalUsuario = this.usuarioRepository.findById(id_user);
+        Optional<Usuario> optionalUsuario = usuarioRepository.findById(id_user);
 
         if (optionalUsuario.isEmpty())
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
-        //Cria o endereco  na base
-        enderecoRepository.save(endereco);
-
-        //Associa o endereco ao usuario
         Usuario usuario = optionalUsuario.get();
 
+        // Associa o endereço ao usuário antes de salvar
         usuario.getEnderecos().add(endereco);
-        usuarioRepository.save(usuario);
+        enderecoRepository.save(endereco);  // Agora sim, salva no banco
+        usuarioRepository.save(usuario);    // Salva o usuário atualizado
 
         return new ResponseEntity<>(endereco, HttpStatus.CREATED);
-
     }
 
-    @DeleteMapping
-    public ResponseEntity<Void> delete(@PathVariable("id_user") int id_user, @RequestBody Endereco endereco){
-        Optional<Usuario> optionalUsuario = this.usuarioRepository.findById(id_user);
+    @DeleteMapping // Removemos o "/{id_user}" porque já está definido no @RequestMapping
+    public ResponseEntity<Void> delete(@PathVariable("id_user") int id_user, @RequestBody Endereco endereco) {
+        Optional<Usuario> optionalUsuario = usuarioRepository.findById(id_user);
 
-        //verifica o usuario
         if (optionalUsuario.isEmpty())
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
         Usuario usuario = optionalUsuario.get();
+        Iterator<Endereco> iterator = usuario.getEnderecos().iterator();
+        boolean enderecoEncontrado = false;
 
-        //verifica se o usuario tem endereco
-        if (!usuario.getEnderecos().contains(endereco))
+        while (iterator.hasNext()) {
+            Endereco e = iterator.next();
+            if (e.getCep().equals(endereco.getCep())) { // Comparação pelo CEP
+                iterator.remove();
+                enderecoEncontrado = true;
+                break;
+            }
+        }
+
+        if (!enderecoEncontrado) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
 
-        //remove o endereco do usuario
-        usuario.getEnderecos().remove(endereco);
-        usuarioRepository.save(usuario);
+        usuarioRepository.save(usuario); // Salva a lista de endereços atualizada
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-
     }
-
 }

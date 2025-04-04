@@ -1,4 +1,4 @@
-package models;
+package model;
 
 import com.azure.spring.data.cosmos.core.mapping.PartitionKey;
 import jakarta.persistence.Entity;

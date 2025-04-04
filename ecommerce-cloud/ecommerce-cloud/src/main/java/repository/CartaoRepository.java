@@ -1,6 +1,6 @@
 package repository;
 
-import models.Cartao;
+import model.Cartao;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
