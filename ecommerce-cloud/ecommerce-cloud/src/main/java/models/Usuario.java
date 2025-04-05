@@ -11,10 +11,14 @@ import java.util.List;
 @Entity(name = "usuario")
 public class Usuario {
 
+
     public Usuario() {
         this.cartoes = new ArrayList<>();
         this.enderecos = new ArrayList<>();
     }
+
+    @Column
+    private Double saldo;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,5 +46,13 @@ public class Usuario {
     @OneToMany
     @JoinColumn(referencedColumnName = "id", name = "id_usuario")
     private List<Endereco> enderecos;
+    public Double getSaldo() {
+        return saldo;
+    }
+
+    public void setSaldo(Double saldo) {
+        this.saldo = saldo;
+    }
+
 
 }
