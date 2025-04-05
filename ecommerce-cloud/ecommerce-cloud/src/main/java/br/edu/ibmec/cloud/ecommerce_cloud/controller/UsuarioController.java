@@ -1,11 +1,11 @@
-package controller;
+package br.edu.ibmec.cloud.ecommerce_cloud.controller;
 
-import model.Usuario;
+import br.edu.ibmec.cloud.ecommerce_cloud.model.Usuario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import repository.UsuarioRepository;
+import br.edu.ibmec.cloud.ecommerce_cloud.repository.UsuarioRepository;
 
 import java.util.List;
 

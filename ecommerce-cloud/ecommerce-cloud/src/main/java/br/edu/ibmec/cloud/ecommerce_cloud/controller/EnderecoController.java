@@ -1,13 +1,13 @@
-package controller;
+package br.edu.ibmec.cloud.ecommerce_cloud.controller;
 
-import model.Endereco;
-import model.Usuario;
+import br.edu.ibmec.cloud.ecommerce_cloud.model.Endereco;
+import br.edu.ibmec.cloud.ecommerce_cloud.model.Usuario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import repository.EnderecoRepository;
-import repository.UsuarioRepository;
+import br.edu.ibmec.cloud.ecommerce_cloud.repository.EnderecoRepository;
+import br.edu.ibmec.cloud.ecommerce_cloud.repository.UsuarioRepository;
 
 import java.util.Iterator;
 import java.util.Optional;

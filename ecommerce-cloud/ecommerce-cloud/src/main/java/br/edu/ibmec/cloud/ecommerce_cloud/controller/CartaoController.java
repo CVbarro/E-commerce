@@ -1,15 +1,15 @@
-package controller;
+package br.edu.ibmec.cloud.ecommerce_cloud.controller;
 
-import model.Cartao;
-import model.Usuario;
+import br.edu.ibmec.cloud.ecommerce_cloud.model.Cartao;
+import br.edu.ibmec.cloud.ecommerce_cloud.model.Usuario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import repository.CartaoRepository;
-import repository.UsuarioRepository;
-import request.TransacaoRequest;
-import request.TransacaoResponse;
+import br.edu.ibmec.cloud.ecommerce_cloud.repository.CartaoRepository;
+import br.edu.ibmec.cloud.ecommerce_cloud.repository.UsuarioRepository;
+import br.edu.ibmec.cloud.ecommerce_cloud.request.TransacaoRequest;
+import br.edu.ibmec.cloud.ecommerce_cloud.request.TransacaoResponse;
 
 import java.time.LocalDateTime;
 import java.util.Iterator;

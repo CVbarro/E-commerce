@@ -1,6 +1,6 @@
-package repository;
+package br.edu.ibmec.cloud.ecommerce_cloud.repository;
 
-import model.Usuario;
+import br.edu.ibmec.cloud.ecommerce_cloud.model.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,4 +1,4 @@
-package request;
+package br.edu.ibmec.cloud.ecommerce_cloud.request;
 
 import lombok.Data;
 
