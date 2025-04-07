@@ -14,49 +14,40 @@ import java.util.Optional;
 import java.util.UUID;
 
 
+
 @RestController
 @RequestMapping("/products")
 public class ProdutoController {
+
     @Autowired
     private ProductRepository repository;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<Produto> create(@RequestBody Produto product) {
-
-        //Gerando identificadores unicos
-
-
         product.setId(UUID.randomUUID().toString());
         repository.save(product);
         return new ResponseEntity<>(product, HttpStatus.CREATED);
-
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<Produto> get(@PathVariable int id) {
+    public ResponseEntity<Produto> get(@PathVariable String id) {
         Optional<Produto> optionalProduto = this.repository.findById(id);
-
-        if (optionalProduto.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-
-        return new ResponseEntity<>(optionalProduto.get(), HttpStatus.OK);
+        return optionalProduto
+                .map(produto -> new ResponseEntity<>(produto, HttpStatus.OK))
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @GetMapping()
+    @GetMapping
     public ResponseEntity<Iterable<Produto>> getAll() {
         List<Produto> result = new ArrayList<>();
         repository.findAll().forEach(result::add);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-
-    // 'DELETE' Remover um produto
     @DeleteMapping("{id}")
-    public ResponseEntity<Produto> delete(@PathVariable int id) {
+    public ResponseEntity<Void> delete(@PathVariable String id) {
         Optional<Produto> optionalProduto = this.repository.findById(id);
-
         if (optionalProduto.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -65,28 +56,24 @@ public class ProdutoController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    //'GET', Listar todos os produtos
     @GetMapping("/produtos")
     public ResponseEntity<List<Produto>> listar() {
         List<Produto> produtos = this.repository.findAll();
-
         if (produtos.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
-
         return new ResponseEntity<>(produtos, HttpStatus.OK);
     }
 
-    //POST, Cria novo produto.
     @PostMapping("/produto")
     public ResponseEntity<Produto> criar(@RequestBody Produto produto) {
+        produto.setId(UUID.randomUUID().toString());
         Produto novoProduto = this.repository.save(produto);
         return new ResponseEntity<>(novoProduto, HttpStatus.CREATED);
     }
 
-    //PUT, Atualizar produto.
     @PutMapping("/produto/{id}")
-    public ResponseEntity<Produto> atualizar(@PathVariable int id, @RequestBody Produto produtoAtualizado) {
+    public ResponseEntity<Produto> atualizar(@PathVariable String id, @RequestBody Produto produtoAtualizado) {
         Optional<Produto> optionalProduto = this.repository.findById(id);
 
         if (optionalProduto.isEmpty()) {
@@ -103,7 +90,4 @@ public class ProdutoController {
         Produto produtoSalvo = this.repository.save(produtoExistente);
         return new ResponseEntity<>(produtoSalvo, HttpStatus.OK);
     }
-
 }
-
-
