@@ -1,8 +1,8 @@
-package models;
+package br.edu.ibmec.cloud.ecommerce_cloud.model;
 
-import com.azure.spring.data.cosmos.core.mapping.PartitionKey;
-import jakarta.persistence.Entity;
+import com.azure.spring.data.cosmos.core.mapping.Container;
 import jakarta.persistence.GeneratedValue;
+import com.azure.spring.data.cosmos.core.mapping.PartitionKey;
 import jakarta.persistence.GenerationType;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
@@ -10,7 +10,7 @@ import org.springframework.data.annotation.Id;
 import java.util.List;
 
 @Data
-@Entity(name = ("produto"))
+@Container(containerName = "products")
 public class Produto {
 
     @Id
@@ -27,5 +27,7 @@ public class Produto {
     private List<String> imageUrl;
 
     private String productDescription;
+
+
 
 }
