@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import br.edu.ibmec.cloud.ecommerce_cloud.repository.CartaoRepository;
 import br.edu.ibmec.cloud.ecommerce_cloud.repository.UsuarioRepository;
-import br.edu.ibmec.cloud.ecommerce_cloud.request.TransacaoRequest;
+import br.edu.ibmec.cloud.ecommerce_cloud.request .TransacaoRequest;
 import br.edu.ibmec.cloud.ecommerce_cloud.request.TransacaoResponse;
 
 import java.time.LocalDateTime;
