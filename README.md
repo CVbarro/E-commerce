@@ -4,6 +4,6 @@ Projeto da disciplina Cloud e Big Data
 membros:
 
 João Pedro Bezamat,
-Cesar,
+Cesar Barros,
 Vitor Farani,
 Pedro Brito
