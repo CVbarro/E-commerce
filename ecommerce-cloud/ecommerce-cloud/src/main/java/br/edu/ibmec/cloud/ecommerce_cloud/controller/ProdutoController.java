@@ -25,7 +25,6 @@ public class ProdutoController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<Produto> create(@RequestBody Produto product) {
-        product.setId(UUID.randomUUID().toString());
         repository.save(product);
         return new ResponseEntity<>(product, HttpStatus.CREATED);
     }
@@ -56,18 +55,10 @@ public class ProdutoController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @GetMapping("/produtos")
-    public ResponseEntity<List<Produto>> listar() {
-        List<Produto> produtos = this.repository.findAll();
-        if (produtos.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
-        return new ResponseEntity<>(produtos, HttpStatus.OK);
-    }
+
 
     @PostMapping("/produto")
     public ResponseEntity<Produto> criar(@RequestBody Produto produto) {
-        produto.setId(UUID.randomUUID().toString());
         Produto novoProduto = this.repository.save(produto);
         return new ResponseEntity<>(novoProduto, HttpStatus.CREATED);
     }

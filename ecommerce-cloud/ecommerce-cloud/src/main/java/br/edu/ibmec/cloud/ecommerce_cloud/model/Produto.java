@@ -1,33 +1,27 @@
 package br.edu.ibmec.cloud.ecommerce_cloud.model;
 
-import com.azure.spring.data.cosmos.core.mapping.Container;
-import jakarta.persistence.GeneratedValue;
-import com.azure.spring.data.cosmos.core.mapping.PartitionKey;
-import jakarta.persistence.GenerationType;
+import jakarta.persistence.*;
 import lombok.Data;
-import org.springframework.data.annotation.Id;
 
 import java.util.List;
 
 @Data
-@Container(containerName = "products")
+@Entity
+@Table(name = "produto")
 public class Produto {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
+    private Long id;
 
-    @PartitionKey
     private String productCategory;
 
     private String productName;
 
     private double price;
 
+    @ElementCollection
     private List<String> imageUrl;
 
     private String productDescription;
-
-
-
 }
