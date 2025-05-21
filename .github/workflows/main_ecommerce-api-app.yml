@@ -61,4 +61,4 @@ jobs:
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'ecommerce-api-app'
-          package: '*.jar'
+           package: '${{ github.workspace }}/target/*.jar'
