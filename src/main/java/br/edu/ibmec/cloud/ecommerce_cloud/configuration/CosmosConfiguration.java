@@ -14,7 +14,7 @@ import org.springframework.context.annotation.PropertySource;
 
 @Configuration
 @EnableConfigurationProperties(CosmosProperties.class)
-@EnableCosmosRepositories(basePackages = "com.galeriaCloud.galeria.repository")
+@EnableCosmosRepositories(basePackages = "br.edu.ibmec.cloud.ecommerce_cloud.repository.cosmos")
 @PropertySource("classpath:application.properties")
 public class CosmosConfiguration extends AbstractCosmosConfiguration {
 
