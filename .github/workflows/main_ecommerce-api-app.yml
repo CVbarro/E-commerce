@@ -26,13 +26,13 @@ jobs:
 
       - name: Build with Maven
         run: mvn clean package
-        working-directory: .api/E-commerce
+        working-directory: .api/e-commerce
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: java-app
-          path: '.api/E-commerce/target/*.jar'
+          path: './api/e-commerce/target/*.jar'
 
   deploy:
     runs-on: ubuntu-latest
