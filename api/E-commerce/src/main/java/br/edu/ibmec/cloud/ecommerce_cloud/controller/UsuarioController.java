@@ -31,9 +31,14 @@ public class UsuarioController {
 
     @PostMapping
     public ResponseEntity<Usuario> create(@RequestBody Usuario usuario) {
+        System.out.println("Recebido: " + usuario);  // debug
         Usuario novoUsuario = repository.save(usuario);
         return ResponseEntity.status(HttpStatus.CREATED).body(novoUsuario);
     }
+
+
+
+
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
