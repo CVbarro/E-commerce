@@ -39,6 +39,18 @@ public class ProdutoController {
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
+    @GetMapping("/procurar")
+    public ResponseEntity<Iterable<Produto>> getProdutoPorNome(@RequestParam("produtoNome") String produtoNome) {
+        Optional<List<Produto>> optionalProduto = this.repository.findByProdutoNomeContains(produtoNome);
+
+        if (optionalProduto.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(optionalProduto.get(), HttpStatus.OK);
+    }
+
+
     @GetMapping
     public ResponseEntity<Iterable<Produto>> getAll() {
         List<Produto> result = new ArrayList<>();

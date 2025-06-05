@@ -1,20 +1,23 @@
 class PerfilUsuario:
     """
-    Representa os dados do usuário no sistema de e-commerce.
+    Representa os dados cadastrais de um usuário no sistema de e-commerce,
+    incluindo informações pessoais, lista de cartões de crédito e endereços vinculados.
     """
 
     def __init__(
         self,
-        nome: str = None,
-        email: str = None,
-        numero_cartao: str = None,
-        data_validade: str = None,
-        cvv: str = None,
-        saldo: float = 0.0
+        nome: str,
+        email: str,
+        dt_nascimento: str,
+        cpf: str,
+        telefone: str,
+        cartoes: list = None,
+        enderecos: list = None
     ):
         self.nome = nome
         self.email = email
-        self.numero_cartao = numero_cartao
-        self.data_validade = data_validade
-        self.cvv = cvv
-        self.saldo = saldo
+        self.dt_nascimento = dt_nascimento
+        self.cpf = cpf
+        self.telefone = telefone
+        self.cartoes = cartoes or []
+        self.enderecos = enderecos or []

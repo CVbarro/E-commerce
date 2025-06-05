@@ -1,5 +1,3 @@
-# Copyright (c) Microsoft Corporation. Todos os direitos reservados.
-# Licenciado sob a Licença MIT.
 
 from botbuilder.core import ActivityHandler, ConversationState, TurnContext, UserState
 from botbuilder.dialogs import Dialog
