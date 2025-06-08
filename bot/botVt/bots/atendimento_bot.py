@@ -4,7 +4,7 @@ from botbuilder.dialogs import Dialog
 from helpers.dialog_helper import DialogHelper
 
 
-class atendimento_bot(ActivityHandler):
+class AtendimentoBot(ActivityHandler):
     """
     Bot responsável por conduzir o fluxo de atendimento, controlando mensagens, estados e interações com o usuário.
     """
@@ -52,3 +52,9 @@ class atendimento_bot(ActivityHandler):
                     "👋 Olá! Bem-vindo(a) ao assistente virtual do nosso ecommerce. "
                     "Estou aqui para ajudar você. Digite qualquer mensagem para começarmos o atendimento!"
                 )
+
+        await DialogHelper.run_dialog(
+            self.fluxo_dialogo,
+            contexto,
+            self.estado_conversa.create_property("EstadoDoDialogo"),
+        )
