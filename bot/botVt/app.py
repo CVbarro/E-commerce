@@ -28,7 +28,7 @@ load_dotenv()
 CONFIG = DefaultConfig()
 
 # Configura o adaptador do bot
-SETTINGS = BotFrameworkAdapterSettings("", "")
+SETTINGS = BotFrameworkAdapterSettings(CONFIG.APP_ID, CONFIG.APP_PASSWORD)
 ADAPTER = BotFrameworkAdapter(SETTINGS)
 
 # Tratamento global de erros

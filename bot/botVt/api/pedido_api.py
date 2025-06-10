@@ -20,7 +20,7 @@ class PedidoAPI:
             return resp.status_code, resp.text
 
     @staticmethod
-    def listar_pedidos_por_usuario(usuario_id):
+    def buscar_pedidos_por_usuario(usuario_id):  # <- nome alterado aqui
         url = f"{PedidoAPI.BASE_URL}/usuario/{usuario_id}"
         resp = requests.get(url)
         try:

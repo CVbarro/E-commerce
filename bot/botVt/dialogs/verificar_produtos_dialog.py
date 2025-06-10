@@ -10,7 +10,7 @@ from botbuilder.dialogs import (
 from botbuilder.core import MessageFactory, UserState, CardFactory
 from botbuilder.schema import HeroCard, CardAction, CardImage, ActionTypes
 from dialogs.comprar_produto_dialog import ComprarProdutoDialog
-from api.produto_api import ProductAPI
+from api.produto_api import ProdutoAPI
 
 class VerificarProdutosDialog(ComponentDialog):
     def __init__(self, user_state: UserState):
@@ -60,20 +60,20 @@ class VerificarProdutosDialog(ComponentDialog):
         return await passo.end_dialog()
 
     async def exibir_produtos(self, termo, passo: WaterfallStepContext):
-        api = ProductAPI()
+        api = ProdutoAPI()
         lista_produtos = api.search_product(termo)
 
         for item in lista_produtos:
             cartao = CardFactory.hero_card(
                 HeroCard(
-                    title=item["productName"],
-                    subtitle=item["productDescription"],
-                    text=f"💵 Preço: R$ {item['price']}",
+                    title=item["produtoNome"],
+                    subtitle=item["produtoDescrisao"],
+                    text=f"💵 Preço: R$ {item['preco']}",
                     images=[CardImage(url=img) for img in item["imageUrl"]],
                     buttons=[
                         CardAction(
                             type=ActionTypes.post_back,
-                            title=f"Comprar {item['productName']}",
+                            title=f"Comprar {item['produtoNome']}",
                             value={"acao": "comprar", "productId": item["id"]}
                         )
                     ]

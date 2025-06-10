@@ -1,6 +1,6 @@
 from botbuilder.dialogs import ComponentDialog, WaterfallDialog, WaterfallStepContext
 from botbuilder.core import MessageFactory
-from api.pedido_api import PedidoAPI  # você precisa ter essa classe
+from api.pedido_api import PedidoAPI  # Certifique-se que o caminho esteja certo
 
 class ExtratoComprasDialog(ComponentDialog):
     def __init__(self):
@@ -18,12 +18,12 @@ class ExtratoComprasDialog(ComponentDialog):
         self.initial_dialog_id = "fluxoExtratoCompra"
 
     async def buscar_extrato_usuario(self, contexto_passos: WaterfallStepContext):
-        usuario_id = 1  # depois, pegue do UserState
+        usuario_id = 1  # Futuramente, recupere via UserState ou autenticação
 
         pedido_api = PedidoAPI()
-        historico = pedido_api.buscar_pedidos_por_usuario(usuario_id)
+        status_code, historico = pedido_api.buscar_pedidos_por_usuario(usuario_id)
 
-        if not historico:
+        if status_code != 200 or not historico:
             await contexto_passos.context.send_activity(
                 MessageFactory.text("📭 Nenhuma compra encontrada no seu histórico.")
             )
@@ -35,7 +35,7 @@ class ExtratoComprasDialog(ComponentDialog):
             endereco = pedido.get("endereco", "Endereço não informado")
             itens = pedido.get("itens", [])
             for item in itens:
-                mensagem += f"- 📦 {item['quantidade']}x {item['produto']} em {data} — entregue em {endereco}\n"
+                mensagem += f"- 📦 {item.get('quantidade', 1)}x {item.get('produto', 'Produto')} em {data} — entregue em {endereco}\n"
 
         await contexto_passos.context.send_activity(MessageFactory.text(mensagem))
         return await contexto_passos.end_dialog()
