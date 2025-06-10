@@ -1,9 +1,6 @@
 package br.edu.ibmec.cloud.ecommerce_cloud.controller;
 
-import br.edu.ibmec.cloud.ecommerce_cloud.model.ItemPedido;
-import br.edu.ibmec.cloud.ecommerce_cloud.model.Pedido;
-import br.edu.ibmec.cloud.ecommerce_cloud.model.Produto;
-import br.edu.ibmec.cloud.ecommerce_cloud.model.Usuario;
+import br.edu.ibmec.cloud.ecommerce_cloud.model.*;
 import br.edu.ibmec.cloud.ecommerce_cloud.repository.UsuarioRepository;
 import br.edu.ibmec.cloud.ecommerce_cloud.repository.cosmos.PedidoRepository;
 import br.edu.ibmec.cloud.ecommerce_cloud.repository.cosmos.ProdutoRepository;
@@ -48,7 +45,13 @@ public class PedidoController {
 
         Usuario usuario = usuarioOptional.get();
 
-        // 2. Montar itens do pedido e calcular total
+        // 2. Validar endereço enviado
+        Endereco endereco = request.getEndereco();
+        if (endereco == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Endereço é obrigatório");
+        }
+
+        // 3. Montar itens do pedido e calcular total
         List<ItemPedido> itens = new ArrayList<>();
         double total = 0.0;
 
@@ -70,14 +73,13 @@ public class PedidoController {
             total += produto.getPreco() * item.getQuantidade();
         }
 
-        // 3. Criar TransacaoRequest
+        // 4. Autorizar pagamento via CartaoController
         TransacaoRequest txRequest = new TransacaoRequest();
         txRequest.setNumero(request.getNumeroCartao());
         txRequest.setCvv(request.getCvv());
         txRequest.setDtExpiracao(request.getDtExpiracao());
         txRequest.setValor(total);
 
-        // 4. Autorizar pagamento via CartaoController
         ResponseEntity<TransacaoResponse> txResponse = cartaoController.authorize(request.getUsuarioId(), txRequest);
 
         if (!txResponse.getStatusCode().is2xxSuccessful() || !"AUTHORIZED".equals(txResponse.getBody().getStatus())) {
@@ -90,7 +92,7 @@ public class PedidoController {
         pedido.setUsuarioId(String.valueOf(request.getUsuarioId()));
         pedido.setDataPedido(LocalDateTime.now());
         pedido.setItens(itens);
-        pedido.setEnderecoEntrega(request.getEndereco());
+        pedido.setEnderecoEntrega(endereco); // endereço enviado no JSON
         pedido.setValorTotal(total);
         pedido.setStatus("AUTORIZADO");
         pedido.setTransacaoId(txResponse.getBody().getCodigoAutorizacao().toString());
@@ -113,7 +115,6 @@ public class PedidoController {
         List<Pedido> doUsuario = new ArrayList<>();
 
         for (Pedido pedido : todos) {
-            // Protege contra null em getUsuarioId()
             if (pedido.getUsuarioId() != null && pedido.getUsuarioId().equals(usuarioId)) {
                 doUsuario.add(pedido);
             }
@@ -123,7 +124,7 @@ public class PedidoController {
     }
 
     @DeleteMapping("/{usuarioId}/{pedidoId}")
-    public ResponseEntity<Void> delete(@PathVariable("usuarioId") String usuarioId, @PathVariable String pedidoId){
+    public ResponseEntity<Void> delete(@PathVariable("usuarioId") String usuarioId, @PathVariable String pedidoId) {
         Optional<Pedido> pedidoOptional = pedidoRepository.findById(pedidoId);
         if (pedidoOptional.isEmpty()) {
             return ResponseEntity.notFound().build();
@@ -131,7 +132,6 @@ public class PedidoController {
 
         Pedido existente = pedidoOptional.get();
 
-        // Garante que o pedido pertence ao usuário correto
         if (!existente.getUsuarioId().equals(usuarioId)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
