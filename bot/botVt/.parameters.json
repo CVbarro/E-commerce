@@ -1,0 +1,23 @@
+{
+    "appId": {
+      "value": "1010077e-3d72-44c7-9b23-26d833598642"
+    },
+    "appSecret": {
+      "value": ""
+    },
+    "botId": {
+      "value": "meu-bot-vt"
+    },
+    "botSku": {
+      "value": "F0"
+    },
+    "newAppServicePlanName": {
+      "value": "plan-vitor"
+    },
+    "appServicePlanLocation": {
+      "value": "brazilsouth"
+    },
+    "newWebAppName": {
+      "value": "meu-bot-vt-webapp"
+    }
+  }
