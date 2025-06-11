@@ -86,7 +86,7 @@ class ComprarProdutoDialog(ComponentDialog):
 
     async def obter_cartao_step(self, step_context: WaterfallStepContext):
         step_context.values["quantidade"] = step_context.result
-        mensagem = MessageFactory.text("Digite o número do cartão de crédito (sem espaços ou traços):")
+        mensagem = MessageFactory.text("Digite o número do cartão de crédito (dezesseis números):")
         return await step_context.prompt(
             TextPrompt.__name__,
             PromptOptions(prompt=mensagem, retry_prompt=MessageFactory.text("Digite um número de cartão válido."))
