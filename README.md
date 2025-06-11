@@ -5,6 +5,5 @@ membros:
 
 João Pedro Bezamat,
 Cesar Barros,
-Vitor Farani,
-Pedro Brito
+Vitor Farani
 
