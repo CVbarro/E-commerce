@@ -1,0 +1,10 @@
+# CORE BOT FRAMEWORK (versões testadas e compatíveis)
+botbuilder-core==4.16.2
+botbuilder-dialogs==4.16.2
+botbuilder-schema==4.16.2
+
+# DEPENDÊNCIAS ESSENCIAIS
+aiohttp==3.8.6  # Versão alternativa que funciona
+requests==2.31.0
+cryptography==45.0.3
+PyJWT==2.10.1

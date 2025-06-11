@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import br.edu.ibmec.cloud.ecommerce_cloud.repository.UsuarioRepository;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/users")
@@ -29,11 +30,41 @@ public class UsuarioController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+//    @GetMapping("/email/{email}")
+//    public ResponseEntity<Usuario> getByEmail(@PathVariable String email) {
+//        return repository.findByEmail(email)
+//                .map(ResponseEntity::ok)
+//                .orElseGet(() -> ResponseEntity.notFound().build());
+//    }
+
+//    @GetMapping("/email/{email}")
+//    public ResponseEntity<?> getByEmail(@PathVariable String email) {
+//        return repository.findByEmail(email)
+//                .map(usuario -> ResponseEntity.ok(Map.of("email", usuario.getEmail())))
+//                .orElseGet(() -> ResponseEntity.notFound().build());
+//    }
+
+
+    @GetMapping("/email/{email}")
+    public ResponseEntity<Usuario> getByEmail(@PathVariable String email) {
+        return repository.findByEmail(email)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+
+
+
     @PostMapping
     public ResponseEntity<Usuario> create(@RequestBody Usuario usuario) {
+        System.out.println("Recebido: " + usuario);  // debug
         Usuario novoUsuario = repository.save(usuario);
         return ResponseEntity.status(HttpStatus.CREATED).body(novoUsuario);
     }
+
+
+
+
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
