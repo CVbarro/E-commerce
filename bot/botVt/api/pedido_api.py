@@ -5,25 +5,25 @@ class PedidoAPI:
 
     @staticmethod
     def criar_pedido(dados_pedido):
-        resp = requests.post(PedidoAPI.BASE_URL, json=dados_pedido)
         try:
+            resp = requests.post(PedidoAPI.BASE_URL, json=dados_pedido)
             return resp.status_code, resp.json()
         except Exception:
             return resp.status_code, resp.text
 
     @staticmethod
     def listar_todos_pedidos():
-        resp = requests.get(PedidoAPI.BASE_URL)
         try:
+            resp = requests.get(PedidoAPI.BASE_URL)
             return resp.status_code, resp.json()
         except Exception:
             return resp.status_code, resp.text
 
     @staticmethod
-    def buscar_pedidos_por_usuario(usuario_id):  # <- nome alterado aqui
+    def buscar_pedidos_por_usuario(usuario_id):
         url = f"{PedidoAPI.BASE_URL}/usuario/{usuario_id}"
-        resp = requests.get(url)
         try:
+            resp = requests.get(url)
             return resp.status_code, resp.json()
         except Exception:
             return resp.status_code, resp.text
@@ -31,5 +31,8 @@ class PedidoAPI:
     @staticmethod
     def deletar_pedido(usuario_id, pedido_id):
         url = f"{PedidoAPI.BASE_URL}/{usuario_id}/{pedido_id}"
-        resp = requests.delete(url)
-        return resp.status_code, resp.text
+        try:
+            resp = requests.delete(url)
+            return resp.status_code, resp.text
+        except Exception as e:
+            return 500, f"Erro ao deletar pedido: {e}"
