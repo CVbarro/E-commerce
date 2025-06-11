@@ -30,18 +30,22 @@ class VerPedidosDialog(ComponentDialog):
         )
 
     async def buscar_pedidos_step(self, step_context: WaterfallStepContext):
-        email = step_context.result
+        email = step_context.result.strip()
         usuario = UsuarioAPI.get_usuario_by_email(email)
 
         if not usuario or "id" not in usuario:
             await step_context.context.send_activity("❌ Usuário não encontrado com esse e-mail.")
             return await step_context.end_dialog()
 
-        usuario_id = usuario["id"]
+        usuario_id = str(usuario["id"])
         pedido_api = PedidoAPI()
         status_code, pedidos = pedido_api.buscar_pedidos_por_usuario(usuario_id)
 
-        if status_code != 200 or not pedidos:
+        if status_code != 200:
+            await step_context.context.send_activity(f"❌ Erro ao buscar pedidos. Código: {status_code}")
+            return await step_context.end_dialog()
+
+        if not isinstance(pedidos, list) or len(pedidos) == 0:
             await step_context.context.send_activity("📭 Nenhum pedido encontrado para esse usuário.")
             return await step_context.end_dialog()
 
@@ -76,4 +80,5 @@ class VerPedidosDialog(ComponentDialog):
 
             await step_context.context.send_activity(MessageFactory.text(resumo))
 
+        await step_context.context.send_activity("🔁 Digite qualquer coisa para voltar ao menu principal.")
         return await step_context.end_dialog()

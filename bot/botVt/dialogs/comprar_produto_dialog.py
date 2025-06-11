@@ -29,7 +29,7 @@ class ComprarProdutoDialog(ComponentDialog):
         super(ComprarProdutoDialog, self).__init__(ComprarProdutoDialog.__name__)
 
         self.user_state = user_state
-        self.BASE_URL = "http://localhost:8080/pedidos"
+        self.BASE_URL = "http://ecommerce-api-g4fbecf2f3fxa5b4.centralus-01.azurewebsites.net/pedidos"
 
         self.add_dialog(TextPrompt(TextPrompt.__name__))
         self.add_dialog(NumberPrompt(NumberPrompt.__name__))
@@ -176,22 +176,16 @@ class ComprarProdutoDialog(ComponentDialog):
             PromptOptions(prompt=MessageFactory.text(resumo))
         )
 
-    from datetime import datetime
-
-# ...
-
     async def finalizar_pedido_step(self, step_context: WaterfallStepContext):
         if step_context.result:
-            # ✅ Conversão para int do usuarioId
             usuario_id = int(step_context.values["usuario_id"])
-
-            # ✅ Conversão de validade (MM/AA) para ISO 8601 com dia fixo 10 e hora 15:30:00
             validade_input = step_context.values["validade_cartao"]
+
             try:
                 validade_convertida = datetime.strptime(validade_input, "%m/%y")
                 validade_formatada = validade_convertida.replace(day=10, hour=15, minute=30, second=0).isoformat()
             except ValueError:
-                validade_formatada = "2025-06-10T15:30:00"  # fallback se o parse falhar
+                validade_formatada = "2025-06-10T15:30:00"
 
             dados_pedido = {
                 "usuarioId": usuario_id,
@@ -225,29 +219,35 @@ class ComprarProdutoDialog(ComponentDialog):
                 print(f"🔍 Status Code: {resposta.status_code}")
                 print(f"🔍 Resposta da API: {resposta.text}")
 
-                if resposta.status_code == 201:
+                if resposta.status_code in [200, 201]:
                     await step_context.context.send_activity(
                         MessageFactory.text("✅ Pedido realizado com sucesso! Obrigado pela compra!")
                     )
                 else:
                     try:
                         erro_json = resposta.json()
-                        mensagem_erro = erro_json.get("message", f"Erro HTTP {resposta.status_code}")
+                        if isinstance(erro_json, dict):
+                            mensagem_erro = erro_json.get("message", f"Erro HTTP {resposta.status_code}")
+                        else:
+                            mensagem_erro = f"Erro HTTP {resposta.status_code}: {erro_json}"
                     except:
                         mensagem_erro = f"Erro HTTP {resposta.status_code}: {resposta.text}"
 
                     await step_context.context.send_activity(
                         MessageFactory.text(f"❌ Erro ao processar pedido: {mensagem_erro}")
                     )
+
+                await step_context.context.send_activity("🔁 Digite qualquer coisa para voltar ao menu principal.")
             except Exception as erro:
                 print(f"🔍 Exceção capturada: {str(erro)}")
                 await step_context.context.send_activity(
                     MessageFactory.text(f"⚠️ Falha na comunicação com o sistema: {str(erro)}")
                 )
+                await step_context.context.send_activity("🔁 Digite qualquer coisa para voltar ao menu principal.")
         else:
             await step_context.context.send_activity(
                 MessageFactory.text("❎ Compra cancelada. Você pode tentar novamente quando quiser.")
             )
+            await step_context.context.send_activity("🔁 Digite qualquer coisa para voltar ao menu principal.")
 
         return await step_context.end_dialog()
-

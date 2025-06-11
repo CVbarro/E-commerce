@@ -1,7 +1,7 @@
 import requests
 
 class ProdutoAPI:
-    BASE_URL = "http://localhost:8080/produtos"
+    BASE_URL = "http://ecommerce-api-g4fbecf2f3fxa5b4.centralus-01.azurewebsites.net/produtos"
 
     @staticmethod
     def create_produto(data):

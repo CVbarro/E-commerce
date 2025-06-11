@@ -3,7 +3,7 @@ from botbuilder.core import MessageFactory, CardFactory
 from botbuilder.dialogs.prompts import TextPrompt, PromptOptions
 from botbuilder.schema import HeroCard
 from api.pedido_api import PedidoAPI
-import requests
+from api.usuario_api import UsuarioAPI
 from datetime import datetime
 
 class ExtratoComprasDialog(ComponentDialog):
@@ -34,7 +34,9 @@ class ExtratoComprasDialog(ComponentDialog):
     async def buscar_extrato_usuario(self, step_context: WaterfallStepContext):
         email_usuario = step_context.result.strip()
 
-        usuario_id = self.obter_usuario_id_por_email(email_usuario)
+        usuario = UsuarioAPI.get_usuario_by_email(email_usuario)
+        usuario_id = usuario.get("id") if usuario else None
+
         if not usuario_id:
             await step_context.context.send_activity("🚫 E-mail não encontrado no sistema.")
             return await step_context.end_dialog()
@@ -50,42 +52,8 @@ class ExtratoComprasDialog(ComponentDialog):
         await step_context.context.send_activity("📋 *Aqui está o seu extrato de compras:*")
 
         for pedido in historico:
-            data_iso = pedido.get("dataPedido", "")
-            try:
-                data_formatada = datetime.fromisoformat(data_iso).strftime("%d/%m/%Y %H:%M")
-            except:
-                data_formatada = data_iso
-
-            endereco = pedido.get("enderecoEntrega", {})
-            endereco_str = (
-                f"{endereco.get('logradouro', '')}, {endereco.get('numero', '')}, "
-                f"{endereco.get('bairro', '')} - {endereco.get('cidade', '')}"
-            )
-
-            itens = pedido.get("itens", [])
-            valor_pedido = sum(item.get("precoUnitario", 0.0) * item.get("quantidade", 1) for item in itens)
+            card, valor_pedido = self.formatar_pedido_para_card(pedido)
             total_valor += valor_pedido
-
-            produtos_texto = ""
-            for item in itens:
-                nome = item.get("nomeProduto", "Produto")
-                qtd = item.get("quantidade", 1)
-                valor = item.get("precoUnitario", 0.0)
-                produtos_texto += f"- {qtd}x {nome} — R$ {valor:.2f} cada\n"
-
-            resumo = (
-                f"📦 *Data:* {data_formatada}\n"
-                f"📍 *Endereço:* {endereco_str}\n\n"
-                f"🛒 *Itens:*\n{produtos_texto}\n"
-                f"💰 *Total do pedido:* R$ {valor_pedido:.2f}"
-            )
-
-            card = HeroCard(
-                title="🧾 Pedido",
-                subtitle=f"Realizado em {data_formatada}",
-                text=resumo
-            )
-
             await step_context.context.send_activity(
                 MessageFactory.attachment(CardFactory.hero_card(card))
             )
@@ -93,14 +61,47 @@ class ExtratoComprasDialog(ComponentDialog):
         await step_context.context.send_activity(
             MessageFactory.text(f"💳 *Valor total de todas as compras:* R$ {total_valor:.2f}")
         )
-
+        await step_context.context.send_activity("🔁 Digite qualquer coisa para voltar ao menu principal.")
         return await step_context.end_dialog()
 
-    def obter_usuario_id_por_email(self, email):
+       
+
+    def formatar_pedido_para_card(self, pedido):
+        data_iso = pedido.get("dataPedido", "")
         try:
-            resp = requests.get("http://localhost:8080/users/buscar-por-email", params={"email": email})
-            if resp.status_code == 200:
-                return str(resp.text)
+            data_formatada = datetime.fromisoformat(data_iso).strftime("%d/%m/%Y %H:%M")
         except Exception as e:
-            print("Erro ao buscar usuário por e-mail:", e)
-        return None
+            print(f"Erro ao formatar data: {e}")
+            data_formatada = data_iso
+
+        endereco = pedido.get("enderecoEntrega", {})
+        endereco_str = (
+            f"{endereco.get('logradouro', '')}, {endereco.get('numero', '')}, "
+            f"{endereco.get('bairro', '')} - {endereco.get('cidade', '')}"
+        )
+
+        itens = pedido.get("itens", [])
+        produtos_texto = ""
+        valor_total_pedido = 0.0
+
+        for item in itens:
+            nome = item.get("nomeProduto", "Produto")
+            qtd = item.get("quantidade", 1)
+            valor_unit = item.get("precoUnitario", 0.0)
+            produtos_texto += f"- {qtd}x {nome} — R$ {valor_unit:.2f} cada\n"
+            valor_total_pedido += valor_unit * qtd
+
+        resumo = (
+            f"📦 *Data:* {data_formatada}\n"
+            f"📍 *Endereço:* {endereco_str}\n\n"
+            f"🛒 *Itens:*\n{produtos_texto}\n"
+            f"💰 *Total do pedido:* R$ {valor_total_pedido:.2f}"
+        )
+
+        card = HeroCard(
+            title="🧾 Pedido",
+            subtitle=f"Realizado em {data_formatada}",
+            text=resumo
+        )
+
+        return card, valor_total_pedido

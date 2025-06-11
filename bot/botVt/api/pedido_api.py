@@ -1,7 +1,7 @@
 import requests
 
 class PedidoAPI:
-    BASE_URL = "http://localhost:8080/pedidos"
+    BASE_URL = "http://ecommerce-api-g4fbecf2f3fxa5b4.centralus-01.azurewebsites.net/pedidos"
 
     @staticmethod
     def criar_pedido(dados_pedido):
